@@ -45,6 +45,7 @@ def model_card(run: str, ckpt: str, meta: dict, results: dict[str, dict], inputs
                      for r in results.values())
     return f"""---
 library_name: lerobot
+license: mit
 pipeline_tag: robotics
 tags: [robotics, diffusion-policy, push-t, franka, mujoco, imitation-learning]
 ---

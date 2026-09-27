@@ -361,3 +361,9 @@ See [CHECKLIST.md](CHECKLIST.md) for the detailed task list.
 - [MuJoCo](https://mujoco.org/) and [MuJoCo Menagerie](https://github.com/google-deepmind/mujoco_menagerie):
   the Franka Panda model (Apache-2.0, see `assets/franka_emika_panda/LICENSE`).
 - [ManiSkill](https://github.com/haosulab/ManiSkill): the stick tool geometry (Apache-2.0).
+
+## License
+
+The code is released under the [MIT License](LICENSE). The Franka Panda model in
+`assets/franka_emika_panda/` comes from MuJoCo Menagerie and keeps its
+[Apache-2.0 license](assets/franka_emika_panda/LICENSE).
