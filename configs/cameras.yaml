@@ -1,0 +1,63 @@
+# Camera definitions. Raw demos store simulator STATE, not images, so you can edit,
+# add or remove cameras here at any time and re-export the dataset - no recollection.
+#
+# World-fixed camera:  pos + lookat (+ optional up, default world +z) + fovy (degrees)
+# Body-attached camera: body + pos + lookat given in that body's frame.
+# `hide_robot: true` renders without the arm (only the stick) - debugging only.
+# `resolution: [height, width]` is the default export size (overridable on the CLI).
+
+cameras:
+  overhead:
+    # High fixed camera opposite the robot, looking down at ~55 deg. Sees the whole
+    # workspace with little arm occlusion. Default primary camera.
+    pos: [1.05, 0.0, 0.80]
+    lookat: [0.51, 0.0, 0.0]
+    fovy: 42
+    resolution: [96, 96]
+
+  corner:
+    # Second fixed camera from the front-right diagonal: resolves what the arm hides
+    # in the overhead view.
+    pos: [0.95, -0.55, 0.75]
+    lookat: [0.51, 0.0, 0.0]
+    fovy: 42
+    resolution: [96, 96]
+
+  corner_left:
+    # Mirror of `corner` (front-left diagonal).
+    pos: [0.95, 0.55, 0.75]
+    lookat: [0.51, 0.0, 0.0]
+    fovy: 42
+    resolution: [96, 96]
+
+  top:
+    # Straight down, like the original Diffusion Policy Push-T image. NOTE: with a real
+    # arm the hand sits directly above the tip and hides it, so it is not the default.
+    pos: [0.51, 0.0, 1.10]
+    lookat: [0.51, 0.0, 0.0]
+    up: [1.0, 0.0, 0.0]       # image "up" = robot forward (+x)
+    fovy: 30
+    resolution: [96, 96]
+
+  side:
+    pos: [0.50, -0.75, 0.55]
+    lookat: [0.50, 0.0, 0.0]
+    fovy: 55
+    resolution: [96, 96]
+
+  wrist:
+    # Mounted on the hand, looking down along the stick at the tip region.
+    body: hand
+    pos: [0.11, 0.0, 0.10]
+    lookat: [-0.03, 0.0, 0.22]
+    up: [1.0, 0.0, 0.0]
+    fovy: 75
+    resolution: [96, 96]
+
+# Top-down view used only by the teleoperation window (not exported).
+teleop_view:
+  pos: [0.51, 0.0, 1.10]
+  lookat: [0.51, 0.0, 0.0]
+  up: [1.0, 0.0, 0.0]
+  fovy: 30
+  hide_robot: true

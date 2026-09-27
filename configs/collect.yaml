@@ -1,0 +1,21 @@
+# Data collection settings.
+
+control_hz: 50            # controller / recording rate (every control step is stored)
+max_tip_speed: 0.25       # m/s, commanded tip target is rate-limited to this
+# Fraction of the target area covered by the block. Tolerance on the 16 cm T:
+#   0.95 -> ~2.6 mm / 2.5 deg (Diffusion Policy benchmark, very hard by mouse)
+#   0.90 -> ~5 mm / 5 deg     0.85 -> ~7.7 mm / 7.6 deg
+# Coverage is stored for every step, so the export can re-filter later.
+success_coverage: 0.90
+success_hold_time: 0.5    # s the coverage must stay above threshold to count as success
+max_episode_time: 90.0    # s, episode auto-stops (not a success) after this
+raw_dir: data/raw
+
+task: "Push the T-shaped block onto the T-shaped target."
+
+teleop:
+  window_size: 720        # pixels (square)
+
+export:
+  fps: 10                 # Diffusion Policy Push-T uses 10 Hz
+  cameras: [overhead, corner]

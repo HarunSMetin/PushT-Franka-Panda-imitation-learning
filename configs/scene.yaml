@@ -1,0 +1,57 @@
+# Scene configuration. All units: metres / radians. World frame == table frame
+# (origin at robot base, x forward, y left, z up, table top at z = 0).
+#
+# IMPORTANT: measure the real T block you will use in phase 3 and put its dimensions
+# here BEFORE collecting demos. Changing geometry after collection = recollect.
+
+t_block:
+  # Push-T proportions (bar 120x30 px, stem 30x90 px) scaled 1 px = 1.333 mm.
+  bar_length: 0.16      # long side of the top bar
+  bar_width: 0.04       # thickness of the top bar (in the plane)
+  stem_length: 0.12     # stem length, measured from the bar
+  stem_width: 0.04
+  height: 0.03          # vertical thickness of the block
+  mass: 0.15            # kg
+  friction: [0.5, 0.005, 0.0001]  # sliding, torsional, rolling
+  rgba: [0.47, 0.60, 0.87, 1.0]  # light blue
+
+target:
+  # Fixed goal pose of the T (same frame convention as the block: origin = T centroid).
+  x: 0.50
+  y: 0.00
+  yaw: 0.7853981634     # pi/4, like the original Push-T goal
+  rgba: [0.45, 0.45, 0.45, 1.0]
+
+table:
+  friction: [0.5, 0.005, 0.0001]
+  rgba: [0.80, 0.80, 0.78, 1.0]
+
+lighting:
+  # Total light must stay below ~1.0 or the table saturates to pure white.
+  headlight_diffuse: 0.25
+  headlight_ambient: 0.20
+  top_light_diffuse: 0.35      # the light defined in panda_stick.xml
+  directional_diffuse: 0.30
+
+workspace:
+  # Region the stick tip may move in (commands are clamped to it).
+  x: [0.30, 0.72]
+  y: [-0.25, 0.25]
+
+robot:
+  tip_height: 0.015     # fixed tip height above the table (the stick never moves in z)
+  # Home joint configuration (stick pointing straight down).
+  home_qpos: [0.0, -0.2, 0.0, -2.2, 0.0, 2.0, 0.7853981634]
+  gravity_compensation: true
+  # Joint servo damping = time_constant * stiffness. Menagerie default is 0.1 s, which
+  # makes the tip lag the command by ~24 mm at full speed; 0.03 s gives ~8 mm.
+  actuator_time_constant: 0.03
+
+init:
+  # Random initial block pose: sampled so the whole T lies inside the workspace shrunk by
+  # `margin`, and overlaps the target by less than `max_initial_coverage`.
+  margin: 0.02
+  max_initial_coverage: 0.10
+  # Random tip start: at least this far from the block outline.
+  tip_clearance: 0.04
+  settle_time: 0.3      # seconds of physics before recording starts

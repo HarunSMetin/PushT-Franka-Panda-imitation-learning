@@ -1,0 +1,34 @@
+# --- Python / environment ---------------------------------------------------
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# --- Data (kept locally, not in git) ------------------------------------------
+# Raw demos are precious: back them up separately (external drive / Hugging Face Hub).
+# To version them in this repo instead, delete the `data/raw/` line below.
+data/raw/
+# Everything below is regenerable from data/raw with the scripts.
+data/lerobot/
+data/videos/
+data/preview/
+
+# --- Training outputs (checkpoints are ~1 GB each) -----------------------------
+outputs/
+wandb/
+
+# --- Partially written files --------------------------------------------------
+*.part
+*.tmp
+
+# --- Editors / OS / local tool settings ---------------------------------------
+.claude/settings.local.json
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# --- Packaged models (scripts/08_package_model.py; uploaded to the Hugging Face Hub) ---
+release/

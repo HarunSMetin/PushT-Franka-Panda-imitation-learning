@@ -1,0 +1,55 @@
+# Main policy: Diffusion Policy from camera images + stick-tip position.
+# Train:    .venv/bin/python training/train.py training/configs/dp_image.yaml
+# Resume:   .venv/bin/python training/train.py training/configs/dp_image.yaml --resume
+# Evaluate: .venv/bin/python training/evaluate.py outputs/dp_image
+
+run_name: dp_image            # results go to outputs/<run_name>/
+
+dataset:
+  root: data/lerobot/pusht_sim        # exported with: 04_export_lerobot.py --cameras overhead wrist
+  repo_id: local/pusht_sim
+
+# What the policy sees. Must only contain things the REAL robot will also have.
+# (observation.environment_state = exact block pose is deliberately NOT here.)
+inputs:
+  - observation.images.overhead
+  - observation.images.wrist
+  - observation.state                 # measured tip [x, y]
+
+policy:                               # LeRobot DiffusionConfig fields (Push-T image settings of the paper)
+  n_obs_steps: 2                      # look at the last 2 frames (t-1, t)
+  horizon: 16                         # predict 16 future actions = 1.6 s at 10 Hz
+  n_action_steps: 8                   # execute 8 of them (0.8 s), then re-plan
+  drop_n_last_frames: 7               # = horizon - n_action_steps - n_obs_steps + 1
+  vision_backbone: resnet18
+  pretrained_backbone_weights: null   # trained from scratch, as in the paper
+  use_group_norm: true                # GroupNorm instead of BatchNorm (stable with small batches)
+  crop_shape: [84, 84]                # random 84x84 crop of the 96x96 image while training
+  crop_is_random: true
+  spatial_softmax_num_keypoints: 32
+  use_separate_rgb_encoder_per_camera: true
+  down_dims: [256, 512, 1024]         # U-Net width. Paper size [512, 1024, 2048] (278M params) runs out
+                                      # of memory on the 6 GB RTX 4050; this is 89M params, 2.3 GB
+  kernel_size: 5
+  n_groups: 8
+  diffusion_step_embed_dim: 128
+  use_film_scale_modulation: true
+  noise_scheduler_type: DDPM
+  num_train_timesteps: 100
+  beta_schedule: squaredcos_cap_v2
+  prediction_type: epsilon
+  clip_sample: true
+  clip_sample_range: 1.0
+  optimizer_lr: 1.0e-4
+  optimizer_weight_decay: 1.0e-6
+  scheduler_name: cosine
+  scheduler_warmup_steps: 500
+
+training:
+  steps: 100000
+  batch_size: 64
+  save_freq: 10000                    # checkpoint every N steps (evaluate these)
+  log_freq: 200
+  num_workers: 8                      # CPU processes decoding video frames
+  seed: 1000
+  use_amp: true                       # mixed precision on the GPU: less memory, faster

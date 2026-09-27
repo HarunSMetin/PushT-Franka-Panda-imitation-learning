@@ -1,0 +1,45 @@
+# Sanity-check policy: Diffusion Policy given the EXACT block pose instead of images.
+# Not deployable on the real robot without block tracking (e.g. a marker on the T), but it
+# shows the best result achievable with this data, and checks data + evaluation are correct.
+# Train:    .venv/bin/python training/train.py training/configs/dp_lowdim.yaml
+# Evaluate: .venv/bin/python training/evaluate.py outputs/dp_lowdim
+
+run_name: dp_lowdim
+
+dataset:
+  root: data/lerobot/pusht_sim_lowdim  # exported with: 04_export_lerobot.py --no-images
+  repo_id: local/pusht_sim_lowdim
+
+inputs:
+  - observation.state                  # tip [x, y]
+  - observation.environment_state      # block [x, y, cos yaw, sin yaw]
+
+policy:
+  n_obs_steps: 2
+  horizon: 16
+  n_action_steps: 8
+  drop_n_last_frames: 7
+  down_dims: [256, 512, 1024]
+  kernel_size: 5
+  n_groups: 8
+  diffusion_step_embed_dim: 128
+  use_film_scale_modulation: true
+  noise_scheduler_type: DDPM
+  num_train_timesteps: 100
+  beta_schedule: squaredcos_cap_v2
+  prediction_type: epsilon
+  clip_sample: true
+  clip_sample_range: 1.0
+  optimizer_lr: 1.0e-4
+  optimizer_weight_decay: 1.0e-6
+  scheduler_name: cosine
+  scheduler_warmup_steps: 500
+
+training:
+  steps: 30000
+  batch_size: 256
+  save_freq: 10000
+  log_freq: 200
+  num_workers: 4
+  seed: 1000
+  use_amp: true

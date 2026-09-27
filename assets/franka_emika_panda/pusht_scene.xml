@@ -1,0 +1,28 @@
+<!-- Push-T scene: Panda + stick on a table. The T block, target outline, end zone and
+     cameras are added programmatically from configs/*.yaml (see pusht/scene.py). -->
+<mujoco model="pusht_scene">
+  <include file="panda_stick.xml"/>
+
+  <option timestep="0.002" integrator="implicitfast"/>
+
+  <visual>
+    <global offwidth="1280" offheight="960" azimuth="180" elevation="-35"/>
+    <headlight diffuse="0.35 0.35 0.35" ambient="0.25 0.25 0.25" specular="0 0 0"/>
+    <quality shadowsize="4096"/>
+  </visual>
+
+  <asset>
+    <texture type="skybox" builtin="gradient" rgb1="0.3 0.5 0.7" rgb2="0 0 0" width="512" height="3072"/>
+    <texture type="2d" name="groundplane" builtin="checker" mark="edge" rgb1="0.2 0.3 0.4"
+      rgb2="0.1 0.2 0.3" markrgb="0.8 0.8 0.8" width="300" height="300"/>
+    <material name="groundplane" texture="groundplane" texuniform="true" texrepeat="5 5" reflectance="0.1"/>
+    <material name="table" rgba="0.72 0.72 0.70 1"/>
+  </asset>
+
+  <worldbody>
+    <light pos="0.3 0.3 2.0" dir="0.1 -0.1 -1" directional="true" diffuse="0.45 0.45 0.45"/>
+    <geom name="floor" size="0 0 0.05" type="plane" material="groundplane" pos="0 0 -0.75"/>
+    <!-- Table top surface at z=0 (table frame == world frame); robot base sits on it. -->
+    <geom name="table" type="box" size="0.6 0.5 0.02" pos="0.45 0 -0.02" material="table"/>
+  </worldbody>
+</mujoco>
